@@ -2,14 +2,13 @@
 
 import sys
 
-#获取工资数额
-temp  = sys.argv[1]
+#Define a function to calculate the insurance
+def calc_insurance(salary):
+    return salary*(0.08+0.02+0.005+0.06)
 
-#参数校验
-try:
-    salary = int(temp)
-    #计算个税
-    pay = salary - 0 - 3500
+#Define a function to calculates the tax
+def calc_tax(salary):
+    pay = salary - calc_insurance(salary) - 3500
     if pay <= 0:
         tax = 0
     elif pay > 0 and pay <= 1500:
@@ -26,9 +25,19 @@ try:
         tax = pay * 0.35 - 5505
     else:
         tax  = pay * 0.45 - 13505
+    return tax
 
-    #输出
-    print("%.2f" % tax)
+#获取工资数额
+try:
+    argvs = sys.argv[1:]
+    for arg in argvs:
+        items = arg.split(':')
+        work_id = int(items[0])
+        salary = int(items[1])
+        #计算个税
+        money = salary - calc_tax(salary) - calc_insurance(salary)
+        print("%d:%.2f " % (work_id, money))
+    
 except ValueError:
     print("Parameter Error")
 
