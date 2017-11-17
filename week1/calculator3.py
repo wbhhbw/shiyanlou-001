@@ -9,7 +9,7 @@ class Config(object):
         with open(configfile, 'r') as file:
             for line in file:
                 conf_list =  line.strip().split('=')
-                self._config[conf_list[0].strip()] = int(conf_list[1])
+                self._config[conf_list[0].strip()] = float(conf_list[1])
 
     # get config data
     def get_config(self, para):
@@ -24,7 +24,7 @@ class UserData(object):
         self._userdata = {}
         with open(userdatafile, 'r') as file:
             for line in file:
-                user_list = line.strp().split(',')
+                user_list = line.strip().split(',')
                 self._userdata[user_list[0].strip()] = int(user_list[1]) 
 
     def get_userdata(self, para):
@@ -105,21 +105,21 @@ class Outputor(object):
     
     
 
-try:
-    argvs = sys.argv[1:]
-    index = argvs.index('-c')
-    configfile = argvs[index+1]
-    index = argvs.index('-d')
-    userdatafile = argvs[index+1]
-    index = argvs.index('-o')
-    outputfile = argvs[index+1]
-    config = Config(configfile)
-    userdata = UserData(userdatafile)
-    calculator = Calculator()
-    output = Outputor()
-    calculator.calculate(userdata, config)
-    output.dumptofile(userdata, calculator)
+#try:
+argvs = sys.argv[1:]
+index = argvs.index('-c')
+configfile = argvs[index+1]
+index = argvs.index('-d')
+userdatafile = argvs[index+1]
+index = argvs.index('-o')
+outputfile = argvs[index+1]
+config = Config(configfile)
+userdata = UserData(userdatafile)
+calculator = Calculator()
+output = Outputor(outputfile)
+calculator.calculate(userdata, config)
+output.dumptofile(userdata, calculator)
     
-except ValueError:
-    print("Parameter Error")
+# except ValueError:
+#     print("Parameter Error")
 
