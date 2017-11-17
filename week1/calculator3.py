@@ -42,7 +42,7 @@ class Calculator(object):
     #Define a function to calculate the insurance and tax then stroe in insur_dict{} and tax_dict{}
     def calculate(self, user, conf):
         ratio = 0
-        for x in conf.get_configs.values():
+        for x in conf.get_configs().values():
             if x < 1:
                 ratio += x
 
@@ -96,12 +96,11 @@ class Outputor(object):
 
     def dumptofile(self, user, calc):
         with open(self._outputfile, 'w') as file:
-            for num in user.get_userdatas.keys():
-                file.write(str(num)+','+str(user.get_userdata[num])+','\
-                    +str(calc.get_insur_dict_data[num])+','\
-                    +str(calc.get_tax_dict_data[num])+','\
-                    +str(user.get_userdata[num]-calc.get_insur_dict_data[num]-calc.get_tax_dict_data[num])\
-                    +'\n')
+            for num in user.get_userdatas().keys():
+                file.write(str(num)+','+str(user.get_userdata(num))+','\
+                    +'{:.2f}'.format(calc.get_insur_dict_data(num))+','\
+                    +'{:.2f}'.format(calc.get_tax_dict_data(num))+','\
+                    +'{:.2f}'.format(user.get_userdata(num)-calc.get_insur_dict_data(num)-calc.get_tax_dict_data(num))+'\n')
     
     
 
