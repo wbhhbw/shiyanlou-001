@@ -104,21 +104,23 @@ class Outputor(object):
     
     
 
-#try:
-argvs = sys.argv[1:]
-index = argvs.index('-c')
-configfile = argvs[index+1]
-index = argvs.index('-d')
-userdatafile = argvs[index+1]
-index = argvs.index('-o')
-outputfile = argvs[index+1]
-config = Config(configfile)
-userdata = UserData(userdatafile)
-calculator = Calculator()
-output = Outputor(outputfile)
-calculator.calculate(userdata, config)
-output.dumptofile(userdata, calculator)
+try:
+    argvs = sys.argv[1:]
+    index = argvs.index('-c')
+    configfile = argvs[index+1]
+    index = argvs.index('-d')
+    userdatafile = argvs[index+1]
+    index = argvs.index('-o')
+    outputfile = argvs[index+1]
+    config = Config(configfile)
+    userdata = UserData(userdatafile)
+    calculator = Calculator()
+    output = Outputor(outputfile)
+    calculator.calculate(userdata, config)
+    output.dumptofile(userdata, calculator)
     
-# except ValueError:
-#     print("Parameter Error")
+except ValueError:
+    print("Parameter Error")
+except FileNotFoundError:
+    print("FileNotFound Error") 
 
