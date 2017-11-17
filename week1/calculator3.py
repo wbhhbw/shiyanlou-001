@@ -25,7 +25,7 @@ class UserData(object):
         with open(userdatafile, 'r') as file:
             for line in file:
                 user_list = line.strp().split(',')
-                self._userdata[int(user_list[0])] = int(user_list[1]) 
+                self._userdata[user_list[0].strip()] = int(user_list[1]) 
 
     def get_userdata(self, para):
         return self._userdata[para]
@@ -34,50 +34,91 @@ class UserData(object):
         return self._userdata
 
 #calculator class, used to calculate social insurance and taxes
-class calculator(object):
+class Calculator(object):
     def __init__(self):
-        self.insr_dict = {}
-        self.tax_dict = {}
+        self._insur_dict = {}
+        self._tax_dict = {}       
 
-    #Define a function to calculate the insurance then stroe in insr_dict{}
-    def calc_insurance(self, user, conf):
-        for k,v in user.get_userdatas().items():
-            if v < conf.get_config('JishuL')
+    #Define a function to calculate the insurance and tax then stroe in insur_dict{} and tax_dict{}
+    def calculate(self, user, conf):
+        ratio = 0
+        for x in conf.get_configs.values():
+            if x < 1:
+                ratio += x
 
+        insur = 0
+        pay = 0 
+        tax = 0            
+        for k,v in user.get_userdatas().items():            
+            if v < conf.get_config('JishuL'):
+                insur = conf.get_config('JishuL') * ratio
+            elif v > conf.get_config('JishuH'):
+                insur = conf.get_config('JishuH') * ratio
+            else:
+                insur = v * ratio
 
+            pay = v - insur - 3500
+            if pay <= 0:
+                tax = 0
+            elif pay > 0 and pay <= 1500:
+                tax = pay * 0.03 - 0
+            elif pay > 1500 and pay <= 4500:
+                tax = pay * 0.1 - 105
+            elif pay >4500 and pay <= 9000:
+                tax = pay * 0.2 - 55
+            elif pay > 9000 and pay <= 35000:
+                tax = pay * 0.25 - 1005
+            elif pay > 35000 and pay <= 55000:
+                tax = pay * 0.3 - 2755
+            elif pay > 55000 and pay <= 80000:
+                tax = pay * 0.35 - 5505
+            else:
+                tax  = pay * 0.45 - 13505
+            self._insur_dict[k] = insur
+            self._tax_dict[k] = tax
 
+    def get_insur_dict(self):
+        return self._insur_dict
 
-    #Define a function to calculates the tax
-    def calc_tax(self, salary):
-        pay = salary - calc_insurance(salary) - 3500
-        if pay <= 0:
-            tax = 0
-        elif pay > 0 and pay <= 1500:
-            tax = pay * 0.03 - 0
-        elif pay > 1500 and pay <= 4500:
-            tax = pay * 0.1 - 105
-        elif pay >4500 and pay <= 9000:
-            tax = pay * 0.2 - 55
-        elif pay > 9000 and pay <= 35000:
-            tax = pay * 0.25 - 1005
-        elif pay > 35000 and pay <= 55000:
-            tax = pay * 0.3 - 2755
-        elif pay > 55000 and pay <= 80000:
-            tax = pay * 0.35 - 5505
-        else:
-            tax  = pay * 0.45 - 13505
-        return tax
+    def get_insur_dict_data(self, para):
+        return self._insur_dict[para]
 
-#获取工资数额
+    def get_tax_dict(self):
+        return self._tax_dict
+
+    def get_tax_dict_data(self, para):
+        return self._tax_dict[para]
+
+#Define an output class
+class Outputor(object):
+    def __init__(self, outputfile):
+        self._outputfile = outputfile
+
+    def dumptofile(self, user, calc):
+        with open(self._outputfile, 'w') as file:
+            for num in user.get_userdatas.keys():
+                file.write(str(num)+','+str(user.get_userdata[num])+','\
+                    +str(calc.get_insur_dict_data[num])+','\
+                    +str(calc.get_tax_dict_data[num])+','\
+                    +str(user.get_userdata[num]-calc.get_insur_dict_data[num]-calc.get_tax_dict_data[num])\
+                    +'\n')
+    
+    
+
 try:
     argvs = sys.argv[1:]
-    for arg in argvs:
-        items = arg.split(':')
-        work_id = int(items[0])
-        salary = int(items[1])
-        #计算个税
-        money = salary - calc_tax(salary) - calc_insurance(salary)
-        print("%d:%.2f " % (work_id, money))
+    index = argvs.index('-c')
+    configfile = argvs[index+1]
+    index = argvs.index('-d')
+    userdatafile = argvs[index+1]
+    index = argvs.index('-o')
+    outputfile = argvs[index+1]
+    config = Config(configfile)
+    userdata = UserData(userdatafile)
+    calculator = Calculator()
+    output = Outputor()
+    calculator.calculate(userdata, config)
+    output.dumptofile(userdata, calculator)
     
 except ValueError:
     print("Parameter Error")
