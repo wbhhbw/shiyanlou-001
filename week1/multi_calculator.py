@@ -1,14 +1,13 @@
-import sys
+import sys, time
 from multiprocessing import Process, Queue
 
-queue1 = Queue()
-queue2 = Queue()
 
 def get_userdata(userdatafile):
     with open(userdatafile, 'r') as file:
         for line in file:
             user_list1 = line.strip().split(',')
-            queue1.put(user_list)
+
+            queue1.put(user_list1)
 
 
 def calculate(configfile):
@@ -18,14 +17,18 @@ def calculate(configfile):
             conf_list =  line.strip().split('=')
             config_dict[conf_list[0].strip()] = float(conf_list[1])
 
+
     #calculate insurance ratio
     ratio = 0
-        for x in config_dict.values():
-            if x < 1:
-                ratio += x
+    for x in config_dict.values():
+        if x < 1:
+            ratio += x
+
 
     #calculate insur and tax then construct a new list
-    while !queue1.empty():
+    if queue1.empty():
+        time.sleep(0.1)
+    while queue1.empty() == False:
         user_list2 = queue1.get()
         salary = int(user_list2[1])
 
@@ -72,14 +75,19 @@ def calculate(configfile):
 
 def dumptofile(outputfile):
     with open(outputfile, 'w') as file:
-        while !queue2.empty():
+        if queue2.empty():
+            time.sleep(0.2)
+        while queue2.empty() == False:
             user_data = queue2.get()
-            file.write(str(user_data).strip('[]'))
+            file.write(str(user_data).strip('[]').replace(' ','').replace('\'','')+'\n')
 
     
 
 
 if __name__ == '__main__':
+    queue1 = Queue()
+    queue2 = Queue()
+
     argvs = sys.argv[1:]
     index = argvs.index('-c')
     configfile = argvs[index+1]
@@ -99,3 +107,4 @@ if __name__ == '__main__':
     p1.join()
     p2.join()
     p3.join()
+
