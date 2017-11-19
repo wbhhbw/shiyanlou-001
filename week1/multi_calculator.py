@@ -85,26 +85,31 @@ def dumptofile(outputfile):
 
 
 if __name__ == '__main__':
-    queue1 = Queue()
-    queue2 = Queue()
+    try:
+        queue1 = Queue()
+        queue2 = Queue()
 
-    argvs = sys.argv[1:]
-    index = argvs.index('-c')
-    configfile = argvs[index+1]
-    index = argvs.index('-d')
-    userdatafile = argvs[index+1]
-    index = argvs.index('-o')
-    outputfile = argvs[index+1]
+        argvs = sys.argv[1:]
+        index = argvs.index('-c')
+        configfile = argvs[index+1]
+        index = argvs.index('-d')
+        userdatafile = argvs[index+1]
+        index = argvs.index('-o')
+        outputfile = argvs[index+1]
 
-    p1 = Process(target=get_userdata, args=(userdatafile,))
-    p2 = Process(target=calculate, args=(configfile,))
-    p3 = Process(target=dumptofile, args=(outputfile,))
+        p1 = Process(target=get_userdata, args=(userdatafile,))
+        p2 = Process(target=calculate, args=(configfile,))
+        p3 = Process(target=dumptofile, args=(outputfile,))
 
-    p1.start()
-    p2.start()
-    p3.start()
+        p1.start()
+        p2.start()
+        p3.start()
 
-    p1.join()
-    p2.join()
-    p3.join()
+        p1.join()
+        p2.join()
+        p3.join()
+    except ValueError as e:
+        print("except:", e)
+    except FileNotFoundError:
+        print("except:", e)
 
