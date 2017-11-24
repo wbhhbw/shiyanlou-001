@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+	{% for article_dict in json_list %}
+		<p>{{ article_dict['title'] }}</p>
+	{% endfor%}
+{% endblock %}
