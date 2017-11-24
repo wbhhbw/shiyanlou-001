@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for
 import os, json
 
 app = Flask(__name__)
@@ -20,5 +20,10 @@ def index():
 
 @app.route('/files/<filename>')
 def file(filename):
-    pass
-
+    absr_path = os.path.join('../files', filename+'.json')
+    if os.path.exists(absr_path):        
+        with open(absr_path, 'r') as f:
+            article_dict = json.loads(f.read())        
+        return render_template('file.html', article_dict=article_dict)
+    else:
+        return render_template('404.html')
