@@ -7,6 +7,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root@localhost/web_app'
 db = SQLAlchemy(app)
 
 class Category(db.Model):
+    __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
 
@@ -18,43 +19,36 @@ class Category(db.Model):
 
 
 class File(db.Model):
+    __tablename__ = 'file'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80))
     created_time = db.Column(db.DateTime)
-    category_id = db.Column(db.Integer, db.ForeignKey(category.id))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     content = db.Column(db.Text)
-    category = db.relationship('Category',
-     backref=db.backref('file', lazy='dynamic'))
+    category = db.relationship('Category')
 
-
-
-    def __init__(self, title, created_time, category_id, content):
+    def __init__(self, title, created_time, category, content):
+        self.title = title
+        self.created_time = created_time
+        self.category = category
+        self.content = content
         
-
-
-        
-
+    def __repr__(self):
+        return '<File %s>' % self.title
+ 
 @app.errorhandler(404)
 def not_fount(error):
     return render_template('404.html'), 404
 
 @app.route('/')
 def index():
-    json_list=[]
-    files_list = os.listdir('../files')
-    for filename in files_list:
-        with open(os.path.join('../files', filename), 'r') as f:
-            article_dict = json.loads(f.read())
-            json_list.append(article_dict)
-    return render_template('index.html', json_list=json_list)            
+    return render_template('index.html', files=File.query.all())            
 
 
-@app.route('/files/<filename>')
-def file(filename):
-    absr_path = os.path.join('../files', filename+'.json')
-    if os.path.exists(absr_path):        
-        with open(absr_path, 'r') as f:
-            article_dict = json.loads(f.read())        
-        return render_template('file.html', article_dict=article_dict)
-    else:
+@app.route('/files/<file_id>')
+def file(file_id):
+    f = File.query.filter_by(id=file_id).first()
+    if f is None:
         return render_template('404.html')
+    else:
+        return render_template('file.html', file = f)

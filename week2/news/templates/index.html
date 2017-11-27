@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-	{% for article_dict in json_list %}
-		<p>{{ article_dict['title'] }}</p>
+	{% for file in files %}
+		<a href="{{ url_for('file', file_id=file.id) }}">{{ file.title }}</a>
 	{% endfor%}
 {% endblock %}
