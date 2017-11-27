@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
+	<table border=1>
 	{% for file in files %}
-		<a href="{{ url_for('file', file_id=file.id) }}">{{ file.title }}</a>
+		<tr>
+			<td><a href="{{ url_for('file', file_id=file.id) }}">{{ file.title }}</a></td>
+			<td>{{ file.tags }}</td>			
+		</tr>
 	{% endfor%}
+	</table>
 {% endblock %}
